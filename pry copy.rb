@@ -37,3 +37,10 @@ b.display.render
 b[[2,2]].moves
 b[[2,3]].moves
 b[[3,2]].moves
+
+load 'board.rb'
+b = Board.new
+q
+p = Pawn.new(b, [6,0], :white, " P ")
+q
+p.move_dirs

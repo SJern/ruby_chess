@@ -24,7 +24,34 @@ class Pawn < Piece
     [[dir, 0], [dir, -1], [dir, 1]]
   end
 
+  def front_squares
+    cur_x, cur_y = current_pos
+    front_steps = [move_dirs.first, move_dirs.first.map { |dx| dx * 2 }]
+    front_steps.map { |(dx, dy)| [cur_x + dx, cur_y + dy] }
+  end
+
+  def front_3
+    cur_x, cur_y = current_pos
+    move_dirs.map { |(dx, dy)| [cur_x + dx, cur_y + dy] }
+  end
+
+  def starting_no_blocking
+    current_pos[0] == (color == :white ? 6 : 1 ) && front_squares.all? { |pos| borad[pos].is_a?(NullPiece) }
+  end
+
   def moves
+    moves_arr = []
+    moves_arr << front_squares[-1] if starting_no_blocking
+    front_3.each_with_index do |pos, idx|
+      if pos.all? { |coord| coord.between?(0, 7) }
+        if idx.zero?
+          moves_arr << pos if board[pos].is_a?(NullPiece)
+        else
+          moves_arr << pos unless board[pos].is_a?(NullPiece) || board[pos].color == color
+        end
+      end
+    end
+    moves_arr
   end
 end
 
