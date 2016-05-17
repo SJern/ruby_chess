@@ -6,10 +6,8 @@ class Board
   attr_reader :grid, :display
 
   def initialize
-
     @grid = Array.new(8) { Array.new(8, NullPiece.instance)  }
     @display = Display.new(self)
-    # @grid[1][1] = NullPiece.new
   end
 
   def [](pos)
@@ -31,7 +29,7 @@ class Board
   end
 
   def take_piece(pos)
-    raise "ERRORRR: No piece here!" if self[pos].nil? # || it's opponent's piece
+    raise "ERRORRR: No piece here!" if self[pos]..is_a?(NullPiece) # || it's opponent's piece
     # return piece
   end
 
@@ -39,15 +37,5 @@ class Board
     new_pos.all? { |x| x.between?(0, 7) }
   end
 
-  # def move
-  #   until true
-  #     pos = display.move
-  #     @grid.mark(pos)
-  #   end
-  # end
-
 
 end
-# 
-# b = Board.new
-# b.display.move

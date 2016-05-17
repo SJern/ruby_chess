@@ -18,7 +18,7 @@ class Display
   def build_row(row, i)
     row.map.with_index do |piece, j|
       color_options = colors_for(i, j)
-      piece.to_s.colorize(color_options) unless piece.nil?
+      piece.to_s.colorize(color_options)
       # "nil".colorize(color_options) if piece.nil?
     end
   end
