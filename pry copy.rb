@@ -50,3 +50,13 @@ q
 b[[6,0]] = p
 q
 p.move_dirs
+
+load 'board.rb'
+b = Board.new
+q
+b[[0,2]] = King.new(b, [0,2], :black)
+q
+b[[2,2]] = King.new(b, [2,2], :white)
+q
+b[[7,6]] = Rook.new(b, [7,6], :white)
+q

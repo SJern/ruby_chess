@@ -2,8 +2,8 @@ require 'singleton'
 require 'byebug'
 
 class Piece
-  attr_reader  :color, :board
-  attr_accessor :current_pos
+  attr_reader  :color
+  attr_accessor :current_pos, :board
   def initialize(board, starting_pos, color)
     @board = board
     @current_pos = starting_pos
@@ -16,8 +16,9 @@ class Piece
   end
 
   def move_into_check?(pos)
-    fake_board= dup(board)
-    fake_board.move(current_pos, pos)
+    fake_board = board.dup
+    fake_board.move!(current_pos, pos)
+    fake_board.in_check?(color)
   end
 
   def to_s

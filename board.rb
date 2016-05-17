@@ -46,37 +46,44 @@ class Board
   end
 
   def play
-    populate
-    while true
-      display.msg = "pick up a piece"
-      start = check_piece(display.move)
-      display.msg = "you picked#{start}, choose where to move it: " +
-        "valid moves: #{self[start].moves}"
+    # populate
+    begin
+      until checkmate?(:black) || checkmate?(:white)
+        display.msg = "pick up a piece"
+        start = check_piece(display.move)
+        display.msg = "you picked#{start}, choose where to move it: " +
+          "valid moves: #{self[start].moves}"
 
-      # sleep(1)
-
-      end_pos =  display.move
-      display.msg = ""
-      move(start, end_pos)
-    end
+        end_pos =  display.move
+        display.msg = ""
+        move(start, end_pos)
+      end
+      p "in checkmate!"
     rescue
       puts "Pick a new piece"
       sleep(1)
       retry
+    end
   end
 
   def move(start, end_pos)
-
     piece = self[start]
-    raise "invalid move" unless piece.moves.include?(end_pos)
-
-
+    raise "invalid move" unless piece.valid_moves.include?(end_pos)
 
     self[end_pos] = self[start]
     self[start] = NullPiece.instance
     self[end_pos].current_pos = end_pos
-
   end
+
+  def move!(start, end_pos)
+    piece = self[start]
+    raise "invalid move" unless piece.moves.include?(end_pos)
+
+    self[end_pos] = self[start]
+    self[start] = NullPiece.instance
+    self[end_pos].current_pos = end_pos
+  end
+
 
   def check_piece(pos)
     raise "ERRORR: No piece here!" if self[pos].is_a?(NullPiece) # || it's opponent's piece
@@ -100,7 +107,8 @@ class Board
   end
 
   def checkmate?(color)
-    in_check?(color) && my_color_pieces.all? { |piece| valid_moves.empty? } # && save_the_king.empty?
+    my_color_pieces = grid.flatten.select { |piece| !piece.is_a?(NullPiece) && piece.color == color }
+    in_check?(color) && my_color_pieces.all? { |piece| piece.valid_moves.empty? } # && save_the_king.empty?
   end
 
   def dup
@@ -109,11 +117,11 @@ class Board
       row.each_with_index do |piece, j|
         unless piece.is_a?(NullPiece)
           n_board[[i,j]] = piece.dup
+          n_board[[i,j]].current_pos = [piece.current_pos[0], piece.current_pos[1]]
           n_board[[i,j]].board = n_board
         end
       end
     end
     n_board
   end
-
 end
