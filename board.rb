@@ -9,7 +9,7 @@ class Board
   def initialize
     @grid = Array.new(8) { Array.new(8, NullPiece.instance)  }
     @display = Display.new(self)
-    populate
+
   end
   def populate
     populate_black
@@ -45,21 +45,75 @@ class Board
     grid[x][y] = value
   end
 
-  def move(start, end_pos)
-    piece = take_piece(start)
-    raise "invalid move" unless piece.moves(pos).include?(end_pos)
-    self[end_pos] = piece
-    self[start] = nil
+  def play
+    populate
+    while true
+      display.msg = "pick up a piece"
+      start = check_piece(display.move)
+      display.msg = "you picked#{start}, choose where to move it: " +
+        "valid moves: #{self[start].moves}"
+
+      # sleep(1)
+
+      end_pos =  display.move
+      display.msg = ""
+      move(start, end_pos)
+    end
+    rescue
+      puts "Pick a new piece"
+      sleep(1)
+      retry
   end
 
-  def take_piece(pos)
-    raise "ERRORRR: No piece here!" if self[pos]..is_a?(NullPiece) # || it's opponent's piece
-    # return piece
+  def move(start, end_pos)
+
+    piece = self[start]
+    raise "invalid move" unless piece.moves.include?(end_pos)
+
+
+
+    self[end_pos] = self[start]
+    self[start] = NullPiece.instance
+    self[end_pos].current_pos = end_pos
+
+  end
+
+  def check_piece(pos)
+    raise "ERRORR: No piece here!" if self[pos].is_a?(NullPiece) # || it's opponent's piece
+    pos
   end
 
   def in_bounds?(new_pos)
     new_pos.all? { |x| x.between?(0, 7) }
   end
 
+
+
+  def in_check?(color)
+    k_pop = grid.flatten.select { |piece| piece.is_a?(King) && piece.color == color }[0].current_pos
+    grid.flatten.reject { |piece| piece.is_a?(NullPiece) || piece.color == color }.each { |piece| return true if piece.moves.include?(k_pop) }
+    false
+  end
+
+  def save_the_king
+    # soldiers_that_can_save_me = []
+  end
+
+  def checkmate?(color)
+    in_check?(color) && my_color_pieces.all? { |piece| valid_moves.empty? } # && save_the_king.empty?
+  end
+
+  def dup
+    n_board = Board.new
+    grid.each_with_index do |row, i|
+      row.each_with_index do |piece, j|
+        unless piece.is_a?(NullPiece)
+          n_board[[i,j]] = piece.dup
+          n_board[[i,j]].board = n_board
+        end
+      end
+    end
+    n_board
+  end
 
 end

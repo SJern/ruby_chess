@@ -2,11 +2,22 @@ require 'singleton'
 require 'byebug'
 
 class Piece
-  attr_reader :current_pos, :color, :board
+  attr_reader  :color, :board
+  attr_accessor :current_pos
   def initialize(board, starting_pos, color)
     @board = board
     @current_pos = starting_pos
     @color = color
+  end
+
+  def valid_moves
+    moves.reject {|pos| move_into_check?(pos)}
+
+  end
+
+  def move_into_check?(pos)
+    fake_board= dup(board)
+    fake_board.move(current_pos, pos)
   end
 
   def to_s
@@ -66,7 +77,7 @@ class SlidingPiece < Piece
       i = 1
       while true
         pos = dir.map.with_index { |e, idx| e * i + current_pos[idx] }
-        break if pos.any? { |idx| !idx.between?(0, 7) } || board[pos].color == color
+        break if pos.any? { |idx| !idx.between?(0, 7) } || (!board[pos].is_a?(NullPiece) && board[pos].color == color)
         moves_arr << pos
         break unless board[pos].is_a?(NullPiece)
         i += 1
@@ -111,7 +122,7 @@ class SteppingPiece < Piece
     cur_x, cur_y = current_pos
     steps.map { |(dx, dy)| [cur_x + dx, cur_y + dy] }
     .select { |pos| pos.all? { |i| i.between?(0, 7) } }
-    .reject { |pos| board[pos].color == color }
+    .reject { |pos| !board[pos].is_a?(NullPiece) && board[pos].color == color }
   end
 end
 

@@ -2,7 +2,9 @@ require "colorize"
 require_relative "cursorable"
 
 class Display
+
   include Cursorable
+  attr_accessor :msg
 
   def initialize(board)
     @board = board
@@ -43,13 +45,14 @@ class Display
 
   def render
     system("clear")
+    puts msg
+    puts "select a spot"
     build_grid.each { |row| puts row.join }
   end
 
   def move
     result = nil
-    # until result
-    while true
+    until result
       self.render
       result = get_input
     end
