@@ -1,12 +1,15 @@
 require_relative 'piece.rb'
 require 'colorize'
+require_relative 'display.rb'
 
 class Board
-  attr_reader :grid
+  attr_reader :grid, :display
 
   def initialize
-    @grid = Array.new(8) { Array.new(8) }
 
+    @grid = Array.new(8) { Array.new(8, NullPiece.instance)  }
+    @display = Display.new(self)
+    # @grid[1][1] = NullPiece.new
   end
 
   def [](pos)
@@ -32,8 +35,19 @@ class Board
     # return piece
   end
 
+  def in_bounds?(new_pos)
+    new_pos.all? { |x| x.between?(0, 7) }
+  end
 
-
+  # def move
+  #   until true
+  #     pos = display.move
+  #     @grid.mark(pos)
+  #   end
+  # end
 
 
 end
+# 
+# b = Board.new
+# b.display.move
