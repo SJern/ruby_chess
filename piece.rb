@@ -32,7 +32,7 @@ end
 class Pawn < Piece
 
   def to_s
-    " P "
+    " ♟ "
   end
 
   def move_dirs
@@ -90,7 +90,7 @@ end
 
 class Bishop < SlidingPiece
   def to_s
-    " B "
+    " ♝ "
   end
 
   def move_dirs
@@ -100,7 +100,7 @@ end
 
 class Rook < SlidingPiece
   def to_s
-    " R "
+    " ♜ "
   end
 
   def move_dirs
@@ -110,7 +110,7 @@ end
 
 class Queen < SlidingPiece
   def to_s
-    " Q "
+    " ♛ "
   end
 
   def move_dirs
@@ -129,7 +129,7 @@ end
 
 class King < SteppingPiece
   def to_s
-    " K "
+    " ♚ "
   end
 
   def steps
@@ -139,7 +139,7 @@ end
 
 class Knight < SteppingPiece
   def to_s
-    " N "
+    " ♞ "
   end
 
   def steps

@@ -26,17 +26,17 @@ class Display
 
   def colors_for(i, j)
     if [i, j] == @cursor_pos
-      bg = :green
+      bg = :red
     elsif (i + j).odd?
-      bg = :light_blue
+      bg = :light_green
     else
-      bg = :blue
+      bg = :cyan
     end
     unless @board[[i,j]].is_a?(NullPiece)
       if @board[[i,j]].color == :black
-        cl = :red
+        cl = :black
       else
-        cl = :white
+        cl = :light_white
       end
     end
 

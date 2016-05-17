@@ -45,29 +45,23 @@ class Board
     grid[x][y] = value
   end
 
-  def play
-    # populate
-    begin
-      until checkmate?(:black) || checkmate?(:white)
-        display.msg = "pick up a piece"
-        start = check_piece(display.move)
-        display.msg = "you picked#{start}, choose where to move it: " +
-          "valid moves: #{self[start].moves}"
-
-        end_pos =  display.move
-        display.msg = ""
-        move(start, end_pos)
-      end
-      p "in checkmate!"
-    rescue
-      puts "Pick a new piece"
-      sleep(1)
-      retry
-    end
-  end
+  # def play
+  #   populate
+  #   begin
+  #     until checkmate?(:black) || checkmate?(:white)
+  #
+  #     end
+  #     p "in checkmate!"
+  #   rescue
+  #     puts "Pick a new piece"
+  #     sleep(1)
+  #     retry
+  #   end
+  # end
 
   def move(start, end_pos)
     piece = self[start]
+
     raise "invalid move" unless piece.valid_moves.include?(end_pos)
 
     self[end_pos] = self[start]
@@ -82,12 +76,6 @@ class Board
     self[end_pos] = self[start]
     self[start] = NullPiece.instance
     self[end_pos].current_pos = end_pos
-  end
-
-
-  def check_piece(pos)
-    raise "ERRORR: No piece here!" if self[pos].is_a?(NullPiece) # || it's opponent's piece
-    pos
   end
 
   def in_bounds?(new_pos)
