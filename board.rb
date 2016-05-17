@@ -4,11 +4,35 @@ require_relative 'display.rb'
 
 class Board
   attr_reader :grid, :display
+  PIECE_ROW = [Rook, Knight, Bishop, Queen, King, Bishop, Knight, Rook]
 
   def initialize
     @grid = Array.new(8) { Array.new(8, NullPiece.instance)  }
     @display = Display.new(self)
+    populate
   end
+  def populate
+    populate_black
+    populate_white
+  end
+  def populate_black
+    grid[1].each_index do |j|
+      grid[1][j] = Pawn.new(self, [1, j], :black)
+    end
+    PIECE_ROW.each_with_index do |class_name, j|
+      grid[0][j] = class_name.new(self, [0, j], :black)
+    end
+  end
+
+  def populate_white
+    grid[6].each_index do |j|
+      grid[6][j] = Pawn.new(self, [6, j], :white)
+    end
+    PIECE_ROW.each_with_index do |class_name, j|
+      grid[7][j] = class_name.new(self, [7, j], :white)
+    end
+  end
+
 
   def [](pos)
     x, y = pos

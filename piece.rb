@@ -2,16 +2,15 @@ require 'singleton'
 require 'byebug'
 
 class Piece
-  attr_reader :type, :current_pos, :color, :board
-  def initialize(board, starting_pos, color, type = "squ")
+  attr_reader :current_pos, :color, :board
+  def initialize(board, starting_pos, color)
     @board = board
     @current_pos = starting_pos
     @color = color
-    @type = type
   end
 
   def to_s
-    type
+    "   "
   end
 
   def moves
@@ -19,6 +18,11 @@ class Piece
 end
 
 class Pawn < Piece
+
+  def to_s
+    " P "
+  end
+
   def move_dirs
     dir = color == :white ? -1 : 1
     [[dir, 0], [dir, -1], [dir, 1]]
@@ -36,7 +40,7 @@ class Pawn < Piece
   end
 
   def starting_no_blocking
-    current_pos[0] == (color == :white ? 6 : 1 ) && front_squares.all? { |pos| borad[pos].is_a?(NullPiece) }
+    current_pos[0] == (color == :white ? 6 : 1 ) && front_squares.all? { |pos| board[pos].is_a?(NullPiece) }
   end
 
   def moves
@@ -56,7 +60,6 @@ class Pawn < Piece
 end
 
 class SlidingPiece < Piece
-
   def moves
     moves_arr = []
     move_dirs.each do |dir|
@@ -74,18 +77,30 @@ class SlidingPiece < Piece
 end
 
 class Bishop < SlidingPiece
+  def to_s
+    " B "
+  end
+
   def move_dirs
     [[-1, 1], [1, 1], [1, -1], [-1, -1]]
   end
 end
 
 class Rook < SlidingPiece
+  def to_s
+    " R "
+  end
+
   def move_dirs
     [[-1, 0], [0, 1], [1, 0], [0, -1]]
   end
 end
 
 class Queen < SlidingPiece
+  def to_s
+    " Q "
+  end
+
   def move_dirs
     [[-1, 0], [-1, 1], [0, 1], [1, 1], [1, 0], [1, -1], [0, -1], [-1, -1]]
   end
@@ -101,21 +116,31 @@ class SteppingPiece < Piece
 end
 
 class King < SteppingPiece
+  def to_s
+    " K "
+  end
+
   def steps
     [[-1, 0], [-1, 1], [0, 1], [1, 1], [1, 0], [1, -1], [0, -1], [-1, -1]]
   end
 end
 
 class Knight < SteppingPiece
+  def to_s
+    " N "
+  end
+
   def steps
     [[-2, 1], [-1, 2], [1, 2], [2, 1], [2, -1], [1, -2], [-1, -2], [-2, -1]]
   end
 end
 
-class NullPiece < Piece
+class NullPiece
+
   include Singleton
 
-  def initialize
-    super(nil, nil, "hi", "   ")
+  def to_s
+    "   "
   end
+
 end
