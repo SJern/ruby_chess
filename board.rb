@@ -1,5 +1,5 @@
-require_relative 'piece.rb'
 require 'colorize'
+require_relative 'piece.rb'
 require_relative 'display.rb'
 
 class Board
@@ -9,35 +9,30 @@ class Board
   def initialize
     @grid = Array.new(8) { Array.new(8, NullPiece.instance)  }
     @display = Display.new(self)
-
   end
+
   def populate
-    populate_black
-    populate_white
-  end
-  def populate_black
-    grid[1].each_index do |j|
-      grid[1][j] = Pawn.new(self, [1, j], :black)
-    end
-    PIECE_ROW.each_with_index do |class_name, j|
-      grid[0][j] = class_name.new(self, [0, j], :black)
-    end
+    populate_(:black)
+    populate_(:white)
   end
 
-  def populate_white
-    grid[6].each_index do |j|
-      grid[6][j] = Pawn.new(self, [6, j], :white)
+  def populate_(color)
+    if color == :black
+      pawn_row, back_row = 1, 0
+    else
+      pawn_row, back_row = 6, 7
+    end
+    grid[pawn_row].each_index do |j|
+      grid[pawn_row][j] = Pawn.new(self, [pawn_row, j], color)
     end
     PIECE_ROW.each_with_index do |class_name, j|
-      grid[7][j] = class_name.new(self, [7, j], :white)
+      grid[back_row][j] = class_name.new(self, [back_row, j], color)
     end
   end
-
 
   def [](pos)
     x, y = pos
     grid[x][y]
-
   end
 
   def []=(pos, value)
@@ -47,8 +42,9 @@ class Board
 
   def move(start, end_pos)
     piece = self[start]
-    raise BadMoveError.new("You cannot move your piece there.") unless piece.valid_moves.include?(end_pos)
-
+    unless piece.valid_moves.include?(end_pos)
+      raise BadMoveError.new("You cannot move your piece there.")
+    end
     self[end_pos] = self[start]
     self[start] = NullPiece.instance
     self[end_pos].current_pos = end_pos
@@ -65,17 +61,22 @@ class Board
     new_pos.all? { |x| x.between?(0, 7) }
   end
 
-
-
   def in_check?(color)
-    k_pop = grid.flatten.select { |piece| piece.is_a?(King) && piece.color == color }[0].current_pos
-    grid.flatten.reject { |piece| piece.is_a?(NullPiece) || piece.color == color }.each { |piece| return true if piece.moves.include?(k_pop) }
+    king_pos = grid.flatten.select { |piece|
+      piece.is_a?(King) && piece.color == color
+    }.first.current_pos
+
+    grid.flatten.reject { |piece|
+      piece.is_a?(NullPiece) || piece.color == color
+    }.each { |piece| return true if piece.moves.include?(king_pos) }
     false
   end
 
-
   def checkmate?(color)
-    my_color_pieces = grid.flatten.select { |piece| !piece.is_a?(NullPiece) && piece.color == color }
+    my_color_pieces = grid.flatten.select do |piece|
+      !piece.is_a?(NullPiece) && piece.color == color
+    end
+
     in_check?(color) && my_color_pieces.all? { |piece| piece.valid_moves.empty? }
   end
 
