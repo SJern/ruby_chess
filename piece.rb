@@ -1,9 +1,9 @@
 require 'singleton'
-require 'byebug'
 
 class Piece
-  attr_reader  :color
   attr_accessor :current_pos, :board
+  attr_reader :color
+
   def initialize(board, starting_pos, color)
     @board = board
     @current_pos = starting_pos
@@ -29,7 +29,6 @@ class Piece
 end
 
 class Pawn < Piece
-
   def to_s
     " ♟ "
   end
@@ -51,7 +50,9 @@ class Pawn < Piece
   end
 
   def starting_no_blocking
-    current_pos[0] == (color == :white ? 6 : 1 ) && front_squares.all? { |pos| board[pos].is_a?(NullPiece) }
+    starting = current_pos[0] == (color == :white ? 6 : 1 )
+    no_block = front_squares.all? { |pos| board[pos].is_a?(NullPiece) }
+    starting && no_block
   end
 
   def moves
@@ -59,10 +60,13 @@ class Pawn < Piece
     moves_arr << front_squares[-1] if starting_no_blocking
     front_3.each_with_index do |pos, idx|
       if pos.all? { |coord| coord.between?(0, 7) }
+        piece = board[pos]
         if idx.zero?
-          moves_arr << pos if board[pos].is_a?(NullPiece)
+          moves_arr << pos if piece.is_a?(NullPiece)
         else
-          moves_arr << pos unless board[pos].is_a?(NullPiece) || board[pos].color == color
+          unless piece.is_a?(NullPiece) || piece.color == color
+            moves_arr << pos
+          end
         end
       end
     end
@@ -77,7 +81,11 @@ class SlidingPiece < Piece
       i = 1
       while true
         pos = dir.map.with_index { |e, idx| e * i + current_pos[idx] }
-        break if pos.any? { |idx| !idx.between?(0, 7) } || (!board[pos].is_a?(NullPiece) && board[pos].color == color)
+        if pos.any? { |idx| !idx.between?(0, 7) }
+          break
+        elsif !board[pos].is_a?(NullPiece) && board[pos].color == color
+          break
+        end
         moves_arr << pos
         break unless board[pos].is_a?(NullPiece)
         i += 1
@@ -147,11 +155,9 @@ class Knight < SteppingPiece
 end
 
 class NullPiece
-
   include Singleton
 
   def to_s
     "   "
   end
-
 end

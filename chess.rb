@@ -1,13 +1,13 @@
-require_relative 'board.rb'
-require_relative 'player.rb'
+require_relative 'board'
+require_relative 'player'
 
 class Game
   attr_reader :current_player, :board
 
   def initialize(player1, player2, board)
-    @board = board
     @player1 = player1
     @player2 = player2
+    @board = board
     @current_player = player1
     @previous_player = player2
   end

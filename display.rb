@@ -2,7 +2,6 @@ require "colorize"
 require_relative "cursorable"
 
 class Display
-
   include Cursorable
   attr_accessor :msg
 

@@ -1,6 +1,6 @@
 require 'colorize'
-require_relative 'piece.rb'
-require_relative 'display.rb'
+require_relative 'piece'
+require_relative 'display'
 
 class Board
   attr_reader :grid, :display
