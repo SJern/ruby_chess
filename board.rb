@@ -45,24 +45,9 @@ class Board
     grid[x][y] = value
   end
 
-  # def play
-  #   populate
-  #   begin
-  #     until checkmate?(:black) || checkmate?(:white)
-  #
-  #     end
-  #     p "in checkmate!"
-  #   rescue
-  #     puts "Pick a new piece"
-  #     sleep(1)
-  #     retry
-  #   end
-  # end
-
   def move(start, end_pos)
     piece = self[start]
-
-    raise "invalid move" unless piece.valid_moves.include?(end_pos)
+    raise BadMoveError.new("You cannot move your piece there.") unless piece.valid_moves.include?(end_pos)
 
     self[end_pos] = self[start]
     self[start] = NullPiece.instance
@@ -71,8 +56,6 @@ class Board
 
   def move!(start, end_pos)
     piece = self[start]
-    raise "invalid move" unless piece.moves.include?(end_pos)
-
     self[end_pos] = self[start]
     self[start] = NullPiece.instance
     self[end_pos].current_pos = end_pos
@@ -90,13 +73,10 @@ class Board
     false
   end
 
-  def save_the_king
-    # soldiers_that_can_save_me = []
-  end
 
   def checkmate?(color)
     my_color_pieces = grid.flatten.select { |piece| !piece.is_a?(NullPiece) && piece.color == color }
-    in_check?(color) && my_color_pieces.all? { |piece| piece.valid_moves.empty? } # && save_the_king.empty?
+    in_check?(color) && my_color_pieces.all? { |piece| piece.valid_moves.empty? }
   end
 
   def dup

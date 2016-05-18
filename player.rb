@@ -9,10 +9,10 @@ class HumanPlayer
   end
 
   def play_turn
-    board.display.msg = "#{color} player, pick up a piece"
+    board.display.msg << "\n#{color.capitalize} player, pick up a piece"
     start = check_piece(board.display.move)
     board.display.msg = "you picked#{start}, choose where to move it: " +
-      "valid moves: #{board[start].valid_moves}"
+      "\nvalid moves: #{board[start].valid_moves}"
 
     end_pos =  board.display.move
     board.display.msg = ""
@@ -20,7 +20,7 @@ class HumanPlayer
   end
 
   def check_piece(pos)
-    raise "ERRORR: No piece here!" if board[pos].is_a?(NullPiece) || board[pos].color != color
+    raise BadMoveError.new("ERRORR: Stop touching what's not yours!") if board[pos].is_a?(NullPiece) || board[pos].color != color
     pos
   end
 end

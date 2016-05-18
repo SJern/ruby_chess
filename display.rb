@@ -9,6 +9,7 @@ class Display
   def initialize(board)
     @board = board
     @cursor_pos = [0, 0]
+    @msg=""
   end
 
   def build_grid
@@ -46,7 +47,6 @@ class Display
   def render
     system("clear")
     puts msg
-    puts "select a spot"
     build_grid.each { |row| puts row.join }
   end
 

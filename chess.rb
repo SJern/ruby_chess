@@ -15,19 +15,24 @@ class Game
   def play
     board.populate
     begin
-      until board.checkmate?(@current_player.color) #board.checkmate?(:black) || board.checkmate?(:white)
+      until board.checkmate?(@current_player.color)
         current_player.play_turn
         @current_player, @previous_player = @previous_player, @current_player
       end
-      print "\n\nin checkmate!\n#{@previous_player.color} you won\n\n"
-    rescue
-      puts "Pick a new piece"
-      sleep(1)
+      print "\n\nCheckmate!\n#{@previous_player.color.upcase}, you won!!!\n\n"
+    rescue BadMoveError => e
+      board.display.msg = e.message
       retry
     end
   end
 end
 
+class BadMoveError < ArgumentError
+  attr_reader :message
+  def initialize(msg="Bad move!")
+    @message = msg
+  end
+end
 
 if $PROGRAM_NAME == __FILE__
   board = Board.new
@@ -35,5 +40,4 @@ if $PROGRAM_NAME == __FILE__
   player2 = HumanPlayer.new(:white, board)
   g = Game.new(player1, player2, board)
   g.play
-
 end
